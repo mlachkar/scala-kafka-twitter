@@ -48,8 +48,6 @@ object KafkaConsumerApp extends App{
   val tweets = encTweets.flatMap(x => SpecificAvroCodecs.toJson[Tweet](jsonSchema).invert(x._2).toOption)
   val hashTags = tweets.flatMap(status =>  status.getText.split(" ").filter(_.startsWith("#")))
 
-  val tweets = encTweets.flatMap(x => SpecificAvroCodecs.toBinary[Tweet].invert(x._2).toOption)
-
   val wordCounts = tweets.flatMap(_.getText.split(" ")).map((_,1)).reduceByKey(_ + _)
 
   val countsSorted = wordCounts.transform(_.sortBy(_._2, ascending = false))
